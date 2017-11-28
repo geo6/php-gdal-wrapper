@@ -1,0 +1,14 @@
+{
+  "name": "geo6/php-gdal-wrapper",
+  "description": "PHP Library to use GDAL functions",
+  "type": "library",
+  "license": "GPL-3.0",
+  "authors": [
+      {
+          "name": "Jonathan Beliën"
+      }
+  ],
+  "require": {
+      "symfony/process": "^3.3"
+  }
+}
