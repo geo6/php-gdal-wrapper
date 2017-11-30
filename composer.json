@@ -1,5 +1,5 @@
 {
-  "name": "geo6/php-gdal-wrapper",
+  "name": "jbelien/php-gdal-wrapper",
   "description": "PHP Library to use GDAL functions",
   "type": "library",
   "license": "GPL-3.0",
