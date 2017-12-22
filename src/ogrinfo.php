@@ -77,7 +77,7 @@ class ogrinfo {
       }
     }
 
-    $this->command = sprintf('ogrinfo %s %s %s', $options, $this->source, implode(' ', $this->layers));
+    $this->command = sprintf('ogrinfo %s %s %s', $options, escapeshellarg($this->source), implode(' ', $this->layers));
 
     return $this->command;
   }
@@ -133,5 +133,13 @@ class options {
 
   public function __get($name) {
     return $this->{$name};
+  }
+
+  public function __isset($name) {
+    return isset($this->{$name});
+  }
+
+  public function __unset($name) {
+    unset($this->{$name});
   }
 }

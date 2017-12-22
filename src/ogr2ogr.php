@@ -57,7 +57,6 @@ class ogr2ogr {
   private function setCommand() {
     $options = '';
     if ($this->options->helpGeneral === TRUE) { $options .= ' --help-general'; }
-
     if ($this->options->skipfailures === TRUE) { $options .= ' -skipfailures'; };
     if ($this->options->append === TRUE) { $options .= ' -append'; };
     if ($this->options->update === TRUE) { $options .= ' -update'; };
@@ -134,7 +133,7 @@ class ogr2ogr {
       }
     }
 
-    $this->command = sprintf('ogr2ogr %s %s %s %s', $options, $this->destination, $this->source, implode(' ', $this->layers));
+    $this->command = sprintf('ogr2ogr %s %s %s %s', $options, escapeshellarg($this->destination), escapeshellarg($this->source), implode(' ', $this->layers));
 
     return $this->command;
   }
@@ -228,5 +227,13 @@ class options {
 
   public function __get($name) {
     return $this->{$name};
+  }
+
+  public function __isset($name) {
+    return isset($this->{$name});
+  }
+
+  public function __unset($name) {
+    unset($this->{$name});
   }
 }
