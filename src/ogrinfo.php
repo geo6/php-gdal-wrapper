@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace GDAL;
+namespace Geo6\GDAL;
 
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -109,6 +109,7 @@ class options {
   private $spat = NULL;
   private $geomfield = NULL;
   private $fid = NULL;
+  private $sql = NULL;
   private $dialect = NULL;
   private $al = FALSE;
   private $rl = FALSE;
@@ -116,13 +117,12 @@ class options {
   private $fields = 'YES';
   private $geom = 'YES';
   private $formats = FALSE;
+  private $oo = array();
   private $nomd = FALSE;
   private $listmdd = FALSE;
   private $mdd = NULL;
   private $nocount = FALSE;
   private $noextent = FALSE;
-
-  private $oo = array();
 
   public function __construct() {
   }
