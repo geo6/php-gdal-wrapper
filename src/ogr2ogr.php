@@ -63,7 +63,7 @@ class ogr2ogr {
     if (!empty($this->options->select)) { $options .= sprintf(' -select %s', escapeshellarg($this->options->select)); };
     if (!empty($this->options->where)) { $options .= sprintf(' -where %s', escapeshellarg($this->options->where)); };
     if ($this->options->progress === TRUE) { $options .= ' -progress'; };
-    if (!empty($this->options->sqz)) { $options .= sprintf(' -sqz %s', escapeshellarg($this->options->sqz)); };
+    if (!empty($this->options->sql)) { $options .= sprintf(' -sql %s', escapeshellarg($this->options->sql)); };
     if (!empty($this->options->dialect)) { $options .= sprintf(' -dialect %s', escapeshellarg($this->options->dialect)); };
     if ($this->options->preserve_fid === TRUE) { $options .= ' -preserve_fid'; };
     if (!empty($this->options->fid)) { $options .= sprintf(' -fid %s', escapeshellarg($this->options->fid)); };
@@ -112,23 +112,23 @@ class ogr2ogr {
     if (!empty($this->options->mo)) { $options .= sprintf(' -mo %s', escapeshellarg($this->options->mo)); };
     if ($this->options->noNativeData === TRUE) { $options .= ' -noNativeData'; };
 
-    if (!empty($this->dsco) && is_array($this->dsco)) {
-      foreach ($this->dsco as $name => $value) {
+    if (!empty($this->options->dsco) && is_array($this->doptions->sco)) {
+      foreach ($this->options->dsco as $name => $value) {
         $options .= sprintf(' -dsco %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
       }
     }
-    if (!empty($this->lco) && is_array($this->lco)) {
-      foreach ($this->lco as $name => $value) {
+    if (!empty($this->options->lco) && is_array($this->options->lco)) {
+      foreach ($this->options->lco as $name => $value) {
         $options .= sprintf(' -lco %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
       }
     }
-    if (!empty($this->oo) && is_array($this->oo)) {
-      foreach ($this->oo as $name => $value) {
+    if (!empty($this->options->oo) && is_array($this->options->oo)) {
+      foreach ($this->options->oo as $name => $value) {
         $options .= sprintf(' -oo %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
       }
     }
-    if (!empty($this->doo) && is_array($this->doo)) {
-      foreach ($this->doo as $name => $value) {
+    if (!empty($this->options->doo) && is_array($this->options->doo)) {
+      foreach ($this->options->doo as $name => $value) {
         $options .= sprintf(' -doo %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
       }
     }
@@ -165,7 +165,7 @@ class options {
   private $select = NULL;
   private $where = NULL;
   private $progress = FALSE;
-  private $sqz = NULL;
+  private $sql = NULL;
   private $dialect = NULL;
   private $preserve_fid = FALSE;
   private $fid = NULL;

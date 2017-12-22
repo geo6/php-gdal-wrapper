@@ -71,8 +71,8 @@ class ogrinfo {
     if ($this->options->nocount === TRUE) { $options .= ' -nocount'; }
     if ($this->options->noextent === TRUE) { $options .= ' -noextent--'; }
 
-    if (!empty($this->oo) && is_array($this->oo)) {
-      foreach ($this->oo as $name => $value) {
+    if (!empty($this->options->oo) && is_array($this->options->oo)) {
+      foreach ($this->options->oo as $name => $value) {
         $options .= sprintf(' -oo %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
       }
     }
