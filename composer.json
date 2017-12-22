@@ -1,16 +1,17 @@
 {
-  "name": "jbelien/php-gdal-wrapper",
+  "name": "geo6/php-gdal-wrapper",
   "description": "PHP Library to use GDAL functions",
   "type": "library",
   "license": "GPL-3.0",
   "autoload": {
     "psr-4": {
-      "GDAL\\": "src/"
+      "Geo6\\GDAL\\": "src/"
     }
   },
   "authors": [
     {
-      "name": "Jonathan Beliën"
+        "name": "Jonathan Beliën",
+        "email": "jbe@geo6.be"
     }
   ],
   "require": {
