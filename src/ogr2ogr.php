@@ -112,7 +112,7 @@ class ogr2ogr {
     if (!empty($this->options->mo)) { $options .= sprintf(' -mo %s', escapeshellarg($this->options->mo)); };
     if ($this->options->noNativeData === TRUE) { $options .= ' -noNativeData'; };
 
-    if (!empty($this->options->dsco) && is_array($this->doptions->sco)) {
+    if (!empty($this->options->dsco) && is_array($this->options->dsco)) {
       foreach ($this->options->dsco as $name => $value) {
         $options .= sprintf(' -dsco %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
       }
