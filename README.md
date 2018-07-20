@@ -9,7 +9,7 @@
 >
 > -- Source: <http://www.gdal.org/>
 
-## GDAL function implemented
+## GDAL functions implemented
 
 - [ogr2ogr](http://www.gdal.org/ogr2ogr.html) : Converts simple features data between file formats.
 - [ogrinfo](http://www.gdal.org/ogrinfo.html) : Lists information about an OGR supported data source.
