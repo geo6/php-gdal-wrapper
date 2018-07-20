@@ -1,265 +1,436 @@
 <?php
-/*
+/**
  * This file is part of the GDAL package.
- *
- * (c) Jonathan Beliën <jbe@geo6.be>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
+ * PHP version 7
+ *
+ * @package Geo6\GDAL
+ * @license GPL License
  */
+
+declare(strict_types=1);
 
 namespace Geo6\GDAL;
 
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * Implements `ogr2ogr` function.
+ *
+ * @author Jonathan Beliën <jbe@geo6.be>
+ * @link   http://www.gdal.org/ogr2ogr.html
+ */
 class ogr2ogr
 {
     /**
+     *
      * @var string
      */
-    private $command;
+    private $_command;
 
     /**
+     *
      * @var string{}
      */
-    private $options;
+    private $_options;
 
     /**
+     *
      * @var string
      */
-    private $destination;
+    private $_destination;
 
     /**
+     *
      * @var string
      */
-    private $source;
+    private $_source;
 
     /**
+     *
      * @var string[]
      */
-    private $layers;
+    private $_layers;
 
-    public function __construct($destination, $source, $layers = [])
+    /**
+     *
+     * @param string   $destination Destination datasource.
+     * @param string   $source      Source datasource.
+     * @param string[] $layers      Layers from source datasource (optional).
+     *
+     * @return void
+     */
+    public function __construct(string $destination, string $source, $layers = [])
     {
-        $this->destination = $destination;
-        $this->source = $source;
-        $this->layers = (is_string($layers) ? [$layers] : $layers);
-        $this->options = new ogr2ogr\options();
+        $this->_destination = $destination;
+        $this->_source = $source;
+        $this->_layers = (is_string($layers) ? [$layers] : $layers);
+        $this->_options = new ogr2ogr\options();
 
-        $this->setCommand();
+        $this->_setCommand();
     }
 
-    public function setOption($name, $value = true)
+    /**
+     *
+     * @param string $name  Option name.
+     * @param mixed  $value Option value.
+     *
+     * @return void
+     */
+    public function setOption(string $name, $value = true) : void
     {
-        $this->options->{$name} = $value;
+        $this->_options->{$name} = $value;
 
-        $this->setCommand();
+        $this->_setCommand();
     }
 
-    private function setCommand()
+    /**
+     *
+     * @return string
+     */
+    private function _setCommand() : string
     {
         $options = '';
-        if ($this->options->helpGeneral === true) {
+        if ($this->_options->helpGeneral === true) {
             $options .= ' --help-general';
         }
-        if ($this->options->skipfailures === true) {
+        if ($this->_options->skipfailures === true) {
             $options .= ' -skipfailures';
         }
-        if ($this->options->append === true) {
+        if ($this->_options->append === true) {
             $options .= ' -append';
         }
-        if ($this->options->update === true) {
+        if ($this->_options->update === true) {
             $options .= ' -update';
         }
-        if (!empty($this->options->select)) {
-            $options .= sprintf(' -select %s', escapeshellarg($this->options->select));
+        if (!empty($this->_options->select)) {
+            $options .= sprintf(
+                ' -select %s',
+                escapeshellarg($this->_options->select)
+            );
         }
-        if (!empty($this->options->where)) {
-            $options .= sprintf(' -where %s', escapeshellarg($this->options->where));
+        if (!empty($this->_options->where)) {
+            $options .= sprintf(
+                ' -where %s',
+                scapeshellarg($this->_options->where)
+            );
         }
-        if ($this->options->progress === true) {
+        if ($this->_options->progress === true) {
             $options .= ' -progress';
         }
-        if (!empty($this->options->sql)) {
-            $options .= sprintf(' -sql %s', escapeshellarg($this->options->sql));
+        if (!empty($this->_options->sql)) {
+            $options .= sprintf(
+                ' -sql %s',
+                escapeshellarg($this->_options->sql)
+            );
         }
-        if (!empty($this->options->dialect)) {
-            $options .= sprintf(' -dialect %s', escapeshellarg($this->options->dialect));
+        if (!empty($this->_options->dialect)) {
+            $options .= sprintf(
+                ' -dialect %s',
+                escapeshellarg($this->_options->dialect)
+            );
         }
-        if ($this->options->preserve_fid === true) {
+        if ($this->_options->preserve_fid === true) {
             $options .= ' -preserve_fid';
         }
-        if (!empty($this->options->fid)) {
-            $options .= sprintf(' -fid %s', escapeshellarg($this->options->fid));
+        if (!empty($this->_options->fid)) {
+            $options .= sprintf(
+                ' -fid %s',
+                escapeshellarg($this->_options->fid)
+            );
         }
-        if (!empty($this->options->limit)) {
-            $options .= sprintf(' -limit %s', escapeshellarg($this->options->limit));
+        if (!empty($this->_options->limit)) {
+            $options .= sprintf(
+                ' -limit %s',
+                escapeshellarg($this->_options->limit)
+            );
         }
-        if (!empty($this->options->spat)) {
-            $options .= sprintf(' -spat %s', escapeshellarg($this->options->spat));
+        if (!empty($this->_options->spat)) {
+            $options .= sprintf(
+                ' -spat %s',
+                escapeshellarg($this->_options->spat)
+            );
         }
-        if (!empty($this->options->spat_srs)) {
-            $options .= sprintf(' -spat_srs %s', escapeshellarg($this->options->spat_srs));
+        if (!empty($this->_options->spat_srs)) {
+            $options .= sprintf(
+                ' -spat_srs %s',
+                escapeshellarg($this->_options->spat_srs)
+            );
         }
-        if (!empty($this->options->geomfield)) {
-            $options .= sprintf(' -geomfield %s', escapeshellarg($this->options->geomfield));
+        if (!empty($this->_options->geomfield)) {
+            $options .= sprintf(
+                ' -geomfield %s',
+                escapeshellarg($this->_options->geomfield)
+            );
         }
-        if (!empty($this->options->a_srs)) {
-            $options .= sprintf(' -a_srs %s', escapeshellarg($this->options->a_srs));
+        if (!empty($this->_options->a_srs)) {
+            $options .= sprintf(
+                ' -a_srs %s',
+                escapeshellarg($this->_options->a_srs)
+            );
         }
-        if (!empty($this->options->t_srs)) {
-            $options .= sprintf(' -t_srs %s', escapeshellarg($this->options->t_srs));
+        if (!empty($this->_options->t_srs)) {
+            $options .= sprintf(
+                ' -t_srs %s',
+                escapeshellarg($this->_options->t_srs)
+            );
         }
-        if (!empty($this->options->s_srs)) {
-            $options .= sprintf(' -s_srs %s', escapeshellarg($this->options->s_srs));
+        if (!empty($this->_options->s_srs)) {
+            $options .= sprintf(
+                ' -s_srs %s',
+                escapeshellarg($this->_options->s_srs)
+            );
         }
-        if (!empty($this->options->f)) {
-            $options .= sprintf(' -f %s', escapeshellarg($this->options->f));
+        if (!empty($this->_options->f)) {
+            $options .= sprintf(
+                ' -f %s',
+                escapeshellarg($this->_options->f)
+            );
         }
-        if ($this->options->overwrite === true) {
+        if ($this->_options->overwrite === true) {
             $options .= ' -overwrite';
         }
-        if (!empty($this->options->nln)) {
-            $options .= sprintf(' -nln %s', escapeshellarg($this->options->nln));
+        if (!empty($this->_options->nln)) {
+            $options .= sprintf(
+                ' -nln %s',
+                escapeshellarg($this->_options->nln)
+            );
         }
-        if (!empty($this->options->nlt)) {
-            $options .= sprintf(' -nlt %s', escapeshellarg($this->options->nlt));
+        if (!empty($this->_options->nlt)) {
+            $options .= sprintf(
+                ' -nlt %s',
+                escapeshellarg($this->_options->nlt)
+            );
         }
-        if (!empty($this->options->dim)) {
-            $options .= sprintf(' -dim %s', escapeshellarg($this->options->dim));
+        if (!empty($this->_options->dim)) {
+            $options .= sprintf(
+                ' -dim %s',
+                escapeshellarg($this->_options->dim)
+            );
         }
-        if (!empty($this->options->gt)) {
-            $options .= sprintf(' -gt %s', escapeshellarg($this->options->gt));
+        if (!empty($this->_options->gt)) {
+            $options .= sprintf(
+                ' -gt %s',
+                escapeshellarg($this->_options->gt)
+            );
         }
-        if (!empty($this->options->clipsrc)) {
-            $options .= sprintf(' -clipsrc %s', escapeshellarg($this->options->clipsrc));
+        if (!empty($this->_options->clipsrc)) {
+            $options .= sprintf(
+                ' -clipsrc %s',
+                escapeshellarg($this->_options->clipsrc)
+            );
         }
-        if (!empty($this->options->clipsrcsql)) {
-            $options .= sprintf(' -clipsrcsql %s', escapeshellarg($this->options->clipsrcsql));
+        if (!empty($this->_options->clipsrcsql)) {
+            $options .= sprintf(
+                ' -clipsrcsql %s',
+                escapeshellarg($this->_options->clipsrcsql)
+            );
         }
-        if (!empty($this->options->clipsrclayer)) {
-            $options .= sprintf(' -clipsrclayer %s', escapeshellarg($this->options->clipsrclayer));
+        if (!empty($this->_options->clipsrclayer)) {
+            $options .= sprintf(
+                ' -clipsrclayer %s',
+                escapeshellarg($this->_options->clipsrclayer)
+            );
         }
-        if (!empty($this->options->clipsrcwhere)) {
-            $options .= sprintf(' -clipsrcwhere %s', escapeshellarg($this->options->clipsrcwhere));
+        if (!empty($this->_options->clipsrcwhere)) {
+            $options .= sprintf(
+                ' -clipsrcwhere %s',
+                escapeshellarg($this->_options->clipsrcwhere)
+            );
         }
-        if (!empty($this->options->clipdst)) {
-            $options .= sprintf(' -clipdst %s', escapeshellarg($this->options->clipdst));
+        if (!empty($this->_options->clipdst)) {
+            $options .= sprintf(
+                ' -clipdst %s',
+                escapeshellarg($this->_options->clipdst)
+            );
         }
-        if (!empty($this->options->clipdstsql)) {
-            $options .= sprintf(' -clipdstsql %s', escapeshellarg($this->options->clipdstsql));
+        if (!empty($this->_options->clipdstsql)) {
+            $options .= sprintf(
+                ' -clipdstsql %s',
+                escapeshellarg($this->_options->clipdstsql)
+            );
         }
-        if (!empty($this->options->clipdstlayer)) {
-            $options .= sprintf(' -clipdstlayer %s', escapeshellarg($this->options->clipdstlayer));
+        if (!empty($this->_options->clipdstlayer)) {
+            $options .= sprintf(
+                ' -clipdstlayer %s',
+                escapeshellarg($this->_options->clipdstlayer)
+            );
         }
-        if (!empty($this->options->clipdstwhere)) {
-            $options .= sprintf(' -clipdstwhere %s', escapeshellarg($this->options->clipdstwhere));
+        if (!empty($this->_options->clipdstwhere)) {
+            $options .= sprintf(
+                ' -clipdstwhere %s',
+                escapeshellarg($this->_options->clipdstwhere)
+            );
         }
-        if ($this->options->wrapdatakline === true) {
+        if ($this->_options->wrapdatakline === true) {
             $options .= ' -wrapdatakline';
         }
-        if (!empty($this->options->datelineoffset)) {
-            $options .= sprintf(' -datelineoffset %s', escapeshellarg($this->options->datelineoffset));
+        if (!empty($this->_options->datelineoffset)) {
+            $options .= sprintf(
+                ' -datelineoffset %s',
+                escapeshellarg($this->_options->datelineoffset)
+            );
         }
-        if (!empty($this->options->simplify)) {
-            $options .= sprintf(' -simplify %s', escapeshellarg($this->options->simplify));
+        if (!empty($this->_options->simplify)) {
+            $options .= sprintf(
+                ' -simplify %s',
+                escapeshellarg($this->_options->simplify)
+            );
         }
-        if (!empty($this->options->segmentize)) {
-            $options .= sprintf(' -segmentize %s', escapeshellarg($this->options->segmentize));
+        if (!empty($this->_options->segmentize)) {
+            $options .= sprintf(
+                ' -segmentize %s',
+                escapeshellarg($this->_options->segmentize)
+            );
         }
-        if ($this->options->addfields === true) {
+        if ($this->_options->addfields === true) {
             $options .= ' -addfields';
         }
-        if ($this->options->unsetFid === true) {
+        if ($this->_options->unsetFid === true) {
             $options .= ' -unsetFid';
         }
-        if ($this->options->relaxedFieldNameMatch === true) {
+        if ($this->_options->relaxedFieldNameMatch === true) {
             $options .= ' -relaxedFieldNameMatch';
         }
-        if ($this->options->forceNullable === true) {
+        if ($this->_options->forceNullable === true) {
             $options .= ' -forceNullable';
         }
-        if ($this->options->unsetDefault === true) {
+        if ($this->_options->unsetDefault === true) {
             $options .= ' -unsetDefault';
         }
-        if (!empty($this->options->fieldTypeToString)) {
-            $options .= sprintf(' -fieldTypeToString %s', escapeshellarg($this->options->fieldTypeToString));
+        if (!empty($this->_options->fieldTypeToString)) {
+            $options .= sprintf(
+                ' -fieldTypeToString %s',
+                escapeshellarg($this->_options->fieldTypeToString)
+            );
         }
-        if ($this->options->unsetFieldWidth === true) {
+        if ($this->_options->unsetFieldWidth === true) {
             $options .= ' -unsetFieldWidth';
         }
-        if (!empty($this->options->mapFieldType)) {
-            $options .= sprintf(' -mapFieldType %s', escapeshellarg($this->options->mapFieldType));
+        if (!empty($this->_options->mapFieldType)) {
+            $options .= sprintf(
+                ' -mapFieldType %s',
+                escapeshellarg($this->_options->mapFieldType)
+            );
         }
-        if (!empty($this->options->fieldmap)) {
-            $options .= sprintf(' -fieldmap %s', escapeshellarg($this->options->fieldmap));
+        if (!empty($this->_options->fieldmap)) {
+            $options .= sprintf(
+                ' -fieldmap %s',
+                escapeshellarg($this->_options->fieldmap)
+            );
         }
-        if ($this->options->splitlistfields === true) {
+        if ($this->_options->splitlistfields === true) {
             $options .= ' -splitlistfields';
         }
-        if (!empty($this->options->maxsubfields)) {
-            $options .= sprintf(' -maxsubfields %s', escapeshellarg($this->options->maxsubfields));
+        if (!empty($this->_options->maxsubfields)) {
+            $options .= sprintf(
+                ' -maxsubfields %s',
+                escapeshellarg($this->_options->maxsubfields)
+            );
         }
-        if ($this->options->explodecollections === true) {
+        if ($this->_options->explodecollections === true) {
             $options .= ' -explodecollections';
         }
-        if (!empty($this->options->zfield)) {
-            $options .= sprintf(' -zfield %s', escapeshellarg($this->options->zfield));
+        if (!empty($this->_options->zfield)) {
+            $options .= sprintf(
+                ' -zfield %s',
+                escapeshellarg($this->_options->zfield)
+            );
         }
-        if (!empty($this->options->gcp)) {
-            $options .= sprintf(' -gcp %s', escapeshellarg($this->options->gcp));
+        if (!empty($this->_options->gcp)) {
+            $options .= sprintf(
+                ' -gcp %s',
+                escapeshellarg($this->_options->gcp)
+            );
         }
-        if (!empty($this->options->order)) {
-            $options .= sprintf(' -order %s', escapeshellarg($this->options->order));
+        if (!empty($this->_options->order)) {
+            $options .= sprintf(
+                ' -order %s',
+                escapeshellarg($this->_options->order)
+            );
         }
-        if ($this->options->tps === true) {
+        if ($this->_options->tps === true) {
             $options .= ' -tps';
         }
-        if ($this->options->nomd === true) {
+        if ($this->_options->nomd === true) {
             $options .= ' -nomd';
         }
-        if (!empty($this->options->mo)) {
-            $options .= sprintf(' -mo %s', escapeshellarg($this->options->mo));
+        if (!empty($this->_options->mo)) {
+            $options .= sprintf(
+                ' -mo %s',
+                escapeshellarg($this->_options->mo)
+            );
         }
-        if ($this->options->noNativeData === true) {
+        if ($this->_options->noNativeData === true) {
             $options .= ' -noNativeData';
         }
 
-        if (!empty($this->options->dsco) && is_array($this->options->dsco)) {
-            foreach ($this->options->dsco as $name => $value) {
-                $options .= sprintf(' -dsco %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
+        if (!empty($this->_options->dsco) && is_array($this->_options->dsco)) {
+            foreach ($this->_options->dsco as $name => $value) {
+                $options .= sprintf(
+                    ' -dsco %s',
+                    escapeshellarg(sprintf('%s=%s', $name, $value))
+                );
             }
         }
-        if (!empty($this->options->lco) && is_array($this->options->lco)) {
-            foreach ($this->options->lco as $name => $value) {
-                $options .= sprintf(' -lco %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
+        if (!empty($this->_options->lco) && is_array($this->_options->lco)) {
+            foreach ($this->_options->lco as $name => $value) {
+                $options .= sprintf(
+                    ' -lco %s',
+                    escapeshellarg(sprintf('%s=%s', $name, $value))
+                );
             }
         }
-        if (!empty($this->options->oo) && is_array($this->options->oo)) {
-            foreach ($this->options->oo as $name => $value) {
-                $options .= sprintf(' -oo %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
+        if (!empty($this->_options->oo) && is_array($this->_options->oo)) {
+            foreach ($this->_options->oo as $name => $value) {
+                $options .= sprintf(
+                    ' -oo %s',
+                    escapeshellarg(sprintf('%s=%s', $name, $value))
+                );
             }
         }
-        if (!empty($this->options->doo) && is_array($this->options->doo)) {
-            foreach ($this->options->doo as $name => $value) {
-                $options .= sprintf(' -doo %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
+        if (!empty($this->_options->doo) && is_array($this->_options->doo)) {
+            foreach ($this->_options->doo as $name => $value) {
+                $options .= sprintf(
+                    ' -doo %s',
+                    escapeshellarg(sprintf('%s=%s', $name, $value))
+                );
             }
         }
 
-        $this->command = sprintf('ogr2ogr %s %s %s %s', $options, escapeshellarg($this->destination), escapeshellarg($this->source), implode(' ', $this->layers));
+        $this->_command = sprintf(
+            'ogr2ogr %s %s %s %s',
+            $options,
+            escapeshellarg($this->_destination),
+            escapeshellarg($this->_source),
+            implode(' ', $this->_layers)
+        );
 
-        return $this->command;
+        return $this->_command;
     }
 
-    public function getCommand()
+    /**
+     *
+     * @return string
+     */
+    public function getCommand() : string
     {
-        return $this->command;
+        return $this->_command;
     }
 
-    public function run()
+    /**
+     *
+     * @throws ProcessFailedException if the process is not successful.
+     *
+     * @return string
+     */
+    public function run() : string
     {
-        $process = new Process($this->command);
+        $process = new Process($this->_command);
         $process->mustRun();
 
         // executes after the command finishes
@@ -268,94 +439,5 @@ class ogr2ogr
         }
 
         return $process->getOutput();
-    }
-}
-
-namespace Geo6\GDAL\ogr2ogr;
-
-class options
-{
-    private $helpGeneral = false;
-    private $skipfailures = false;
-    private $append = false;
-    private $update = false;
-    private $select = null;
-    private $where = null;
-    private $progress = false;
-    private $sql = null;
-    private $dialect = null;
-    private $preserve_fid = false;
-    private $fid = null;
-    private $limit = null;
-    private $spat = null;
-    private $spat_srs = null;
-    private $geomfield = null;
-    private $a_srs = null;
-    private $t_srs = null;
-    private $s_srs = null;
-    private $f = null;
-    private $overwrite = false;
-    private $dsco = [];
-    private $lco = [];
-    private $nln = null;
-    private $nlt = null;
-    private $dim = null;
-    private $gt = null;
-    private $oo = [];
-    private $doo = [];
-    private $clipsrc = null;
-    private $clipsrcsql = null;
-    private $clipsrclayer = null;
-    private $clipsrcwhere = null;
-    private $clipdst = null;
-    private $clipdstsql = null;
-    private $clipdstlayer = null;
-    private $clipdstwhere = null;
-    private $wrapdatakline = false;
-    private $datelineoffset = null;
-    private $simplify = null;
-    private $segmentize = null;
-    private $addfields = false;
-    private $unsetFid = false;
-    private $relaxedFieldNameMatch = false;
-    private $forceNullable = false;
-    private $unsetDefault = false;
-    private $fieldTypeToString = null;
-    private $unsetFieldWidth = false;
-    private $mapFieldType = null;
-    private $fieldmap = null;
-    private $splitlistfields = false;
-    private $maxsubfields = null;
-    private $explodecollections = false;
-    private $zfield = null;
-    private $gcp = null;
-    private $order = null;
-    private $tps = false;
-    private $nomd = false;
-    private $mo = null;
-    private $noNativeData = false;
-
-    public function __construct()
-    {
-    }
-
-    public function __set($name, $value)
-    {
-        $this->{$name} = $value;
-    }
-
-    public function __get($name)
-    {
-        return $this->{$name};
-    }
-
-    public function __isset($name)
-    {
-        return isset($this->{$name});
-    }
-
-    public function __unset($name)
-    {
-        unset($this->{$name});
     }
 }

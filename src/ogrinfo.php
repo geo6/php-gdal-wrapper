@@ -1,139 +1,220 @@
 <?php
-/*
+/**
  * This file is part of the GDAL package.
- *
- * (c) Jonathan Beliën <jbe@geo6.be>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
+ * PHP version 7
+ *
+ * @package Geo6\GDAL
+ * @license GPL License
  */
+
+declare(strict_types=1);
 
 namespace Geo6\GDAL;
 
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * Implements `ogrinfo` function.
+ *
+ * @author Jonathan Beliën <jbe@geo6.be>
+ * @link   http://www.gdal.org/ogrinfo.html
+ */
 class ogrinfo
 {
     /**
+     *
      * @var string
      */
-    private $command;
+    private $_command;
 
     /**
+     *
      * @var string{}
      */
-    private $options;
+    private $_options;
 
     /**
+     *
      * @var string
      */
-    private $source;
+    private $_source;
 
     /**
+     *
      * @var string[]
      */
-    private $layers;
+    private $_layers;
 
-    public function __construct($source, $layers = [])
+    /**
+     *
+     * @param string   $source Datasource.
+     * @param string[] $layers Layers from datasource (optional).
+     *
+     * @return void
+     */
+    public function __construct(string $source, $layers = [])
     {
-        $this->source = $source;
-        $this->layers = (is_string($layers) ? [$layers] : $layers);
-        $this->options = new ogrinfo\options();
+        $this->_source = $source;
+        $this->_layers = (is_string($layers) ? [$layers] : $layers);
+        $this->_options = new ogrinfo\options();
 
-        $this->setCommand();
+        $this->_setCommand();
     }
 
-    public function setOption($name, $value = true)
+    /**
+     *
+     * @param string $name  Option name.
+     * @param mixed  $value Option value.
+     *
+     * @return void
+     */
+    public function setOption(string $name, $value = true) : void
     {
-        $this->options->{$name} = $value;
+        $this->_options->{$name} = $value;
 
-        $this->setCommand();
+        $this->_setCommand();
     }
 
-    private function setCommand()
+    /**
+     *
+     * @return string
+     */
+    private function _setCommand() : string
     {
         $options = '';
-        if ($this->options->helpGeneral === true) {
+        if ($this->_options->helpGeneral === true) {
             $options .= ' --help-general';
         }
-        if ($this->options->ro === true) {
+        if ($this->_options->ro === true) {
             $options .= ' -ro';
         }
-        if ($this->options->q === true) {
+        if ($this->_options->q === true) {
             $options .= ' -q';
         }
-        if (!empty($this->options->where)) {
-            $options .= sprintf(' -where %s', escapeshellarg($this->options->where));
+        if (!empty($this->_options->where)) {
+            $options .= sprintf(
+                ' -where %s',
+                escapeshellarg($this->_options->where)
+            );
         }
-        if (!empty($this->options->spat)) {
-            $options .= sprintf(' -spat %f %f %f %f', $this->options->spat[0], $this->options->spat[1], $this->options->spat[2], $this->options->spat[3]);
+        if (!empty($this->_options->spat)) {
+            $options .= sprintf(
+                ' -spat %f %f %f %f',
+                $this->_options->spat[0],
+                $this->_options->spat[1],
+                $this->_options->spat[2],
+                $this->_options->spat[3]
+            );
         }
-        if (!empty($this->options->geomfield)) {
-            $options .= sprintf(' -geomfield %s', escapeshellarg($this->options->geomfield));
+        if (!empty($this->_options->geomfield)) {
+            $options .= sprintf(
+                ' -geomfield %s',
+                escapeshellarg($this->_options->geomfield)
+            );
         }
-        if (!empty($this->options->fid)) {
-            $options .= sprintf(' -fid %s', $this->options->fid);
+        if (!empty($this->_options->fid)) {
+            $options .= sprintf(
+                ' -fid %s',
+                $this->_options->fid
+            );
         }
-        if (!empty($this->options->sql)) {
-            $options .= sprintf(' -sql %s', escapeshellarg($this->options->sql));
+        if (!empty($this->_options->sql)) {
+            $options .= sprintf(
+                ' -sql %s',
+                escapeshellarg($this->_options->sql)
+            );
         }
-        if (!empty($this->options->dialect)) {
-            $options .= sprintf(' -dialect %s', escapeshellarg($this->options->dialect));
+        if (!empty($this->_options->dialect)) {
+            $options .= sprintf(
+                ' -dialect %s',
+                escapeshellarg($this->_options->dialect)
+            );
         }
-        if ($this->options->al === true) {
+        if ($this->_options->al === true) {
             $options .= ' -al';
         }
-        if ($this->options->rl === true) {
+        if ($this->_options->rl === true) {
             $options .= ' -rl';
         }
-        if ($this->options->so === true) {
+        if ($this->_options->so === true) {
             $options .= ' -so';
         }
-        if (!empty($this->options->fields)) {
-            $options .= sprintf(' -fields %s', escapeshellarg($this->options->fields));
+        if (!empty($this->_options->fields)) {
+            $options .= sprintf(
+                ' -fields %s',
+                escapeshellarg($this->_options->fields)
+            );
         }
-        if (!empty($this->options->geom)) {
-            $options .= sprintf(' -geom %s', escapeshellarg($this->options->geom));
+        if (!empty($this->_options->geom)) {
+            $options .= sprintf(
+                ' -geom %s',
+                escapeshellarg($this->_options->geom)
+            );
         }
-        if ($this->options->formats === true) {
+        if ($this->_options->formats === true) {
             $options .= ' --formats';
         }
-        if ($this->options->nomd === true) {
+        if ($this->_options->nomd === true) {
             $options .= ' -nomd';
         }
-        if ($this->options->listmdd === true) {
+        if ($this->_options->listmdd === true) {
             $options .= ' -listmdd';
         }
-        if (!empty($this->options->mdd)) {
-            $options .= sprintf(' -mdd %s', escapeshellarg($this->options->mdd));
+        if (!empty($this->_options->mdd)) {
+            $options .= sprintf(
+                ' -mdd %s',
+                escapeshellarg($this->_options->mdd)
+            );
         }
-        if ($this->options->nocount === true) {
+        if ($this->_options->nocount === true) {
             $options .= ' -nocount';
         }
-        if ($this->options->noextent === true) {
+        if ($this->_options->noextent === true) {
             $options .= ' -noextent--';
         }
 
-        if (!empty($this->options->oo) && is_array($this->options->oo)) {
-            foreach ($this->options->oo as $name => $value) {
-                $options .= sprintf(' -oo %s', escapeshellarg(sprintf('%s=%s', $name, $value)));
+        if (!empty($this->_options->oo) && is_array($this->_options->oo)) {
+            foreach ($this->_options->oo as $name => $value) {
+                $options .= sprintf(
+                    ' -oo %s',
+                    escapeshellarg(sprintf('%s=%s', $name, $value))
+                );
             }
         }
 
-        $this->command = sprintf('ogrinfo %s %s %s', $options, escapeshellarg($this->source), implode(' ', $this->layers));
+        $this->_command = sprintf(
+            'ogrinfo %s %s %s',
+            $options,
+            escapeshellarg($this->_source),
+            implode(' ', $this->_layers)
+        );
 
-        return $this->command;
+        return $this->_command;
     }
 
-    public function getCommand()
+    /**
+     *
+     * @return string
+     */
+    public function getCommand() : string
     {
-        return $this->command;
+        return $this->_command;
     }
 
-    public function run()
+    /**
+     *
+     * @throws ProcessFailedException if the process is not successful.
+     *
+     * @return string
+     */
+    public function run() : string
     {
-        $process = new Process($this->command);
+        $process = new Process($this->_command);
         $process->mustRun();
 
         // executes after the command finishes
@@ -142,56 +223,5 @@ class ogrinfo
         }
 
         return $process->getOutput();
-    }
-}
-
-namespace GDAL\ogrinfo;
-
-class options
-{
-    private $helpGeneral = false;
-    private $ro = false;
-    private $q = false;
-    private $where = null;
-    private $spat = null;
-    private $geomfield = null;
-    private $fid = null;
-    private $sql = null;
-    private $dialect = null;
-    private $al = false;
-    private $rl = false;
-    private $so = false;
-    private $fields = 'YES';
-    private $geom = 'YES';
-    private $formats = false;
-    private $oo = [];
-    private $nomd = false;
-    private $listmdd = false;
-    private $mdd = null;
-    private $nocount = false;
-    private $noextent = false;
-
-    public function __construct()
-    {
-    }
-
-    public function __set($name, $value)
-    {
-        $this->{$name} = $value;
-    }
-
-    public function __get($name)
-    {
-        return $this->{$name};
-    }
-
-    public function __isset($name)
-    {
-        return isset($this->{$name});
-    }
-
-    public function __unset($name)
-    {
-        unset($this->{$name});
     }
 }
