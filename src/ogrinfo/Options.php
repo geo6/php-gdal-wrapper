@@ -8,7 +8,6 @@
  *
  * PHP version 7
  *
- * @package Geo6\GDAL\ogrinfo
  * @license GPL License
  */
 
@@ -17,7 +16,6 @@ declare(strict_types=1);
 namespace Geo6\GDAL\ogrinfo;
 
 /**
- *
  * @author Jonathan Beliën <jbe@geo6.be>
  */
 class Options

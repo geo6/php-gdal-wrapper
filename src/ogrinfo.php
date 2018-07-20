@@ -7,7 +7,6 @@
  *
  * PHP version 7
  *
- * @package Geo6\GDAL
  * @license GPL License
  */
 
@@ -22,36 +21,32 @@ use Symfony\Component\Process\Process;
  * Implements `ogrinfo` function.
  *
  * @author Jonathan Beliën <jbe@geo6.be>
+ *
  * @link   http://www.gdal.org/ogrinfo.html
  */
 class ogrinfo
 {
     /**
-     *
      * @var string
      */
     private $_command;
 
     /**
-     *
      * @var string{}
      */
     private $_options;
 
     /**
-     *
      * @var string
      */
     private $_source;
 
     /**
-     *
      * @var string[]
      */
     private $_layers;
 
     /**
-     *
      * @param string   $source Datasource.
      * @param string[] $layers Layers from datasource (optional).
      *
@@ -67,7 +62,6 @@ class ogrinfo
     }
 
     /**
-     *
      * @param string $name  Option name.
      * @param mixed  $value Option value.
      *
@@ -81,7 +75,6 @@ class ogrinfo
     }
 
     /**
-     *
      * @return string
      */
     private function _setCommand() : string
@@ -198,7 +191,6 @@ class ogrinfo
     }
 
     /**
-     *
      * @return string
      */
     public function getCommand() : string
@@ -207,7 +199,6 @@ class ogrinfo
     }
 
     /**
-     *
      * @throws ProcessFailedException if the process is not successful.
      *
      * @return string

@@ -7,7 +7,6 @@
  *
  * PHP version 7
  *
- * @package Geo6\GDAL
  * @license GPL License
  */
 
@@ -22,42 +21,37 @@ use Symfony\Component\Process\Process;
  * Implements `ogr2ogr` function.
  *
  * @author Jonathan Beliën <jbe@geo6.be>
+ *
  * @link   http://www.gdal.org/ogr2ogr.html
  */
 class ogr2ogr
 {
     /**
-     *
      * @var string
      */
     private $_command;
 
     /**
-     *
      * @var string{}
      */
     private $_options;
 
     /**
-     *
      * @var string
      */
     private $_destination;
 
     /**
-     *
      * @var string
      */
     private $_source;
 
     /**
-     *
      * @var string[]
      */
     private $_layers;
 
     /**
-     *
      * @param string   $destination Destination datasource.
      * @param string   $source      Source datasource.
      * @param string[] $layers      Layers from source datasource (optional).
@@ -75,7 +69,6 @@ class ogr2ogr
     }
 
     /**
-     *
      * @param string $name  Option name.
      * @param mixed  $value Option value.
      *
@@ -89,7 +82,6 @@ class ogr2ogr
     }
 
     /**
-     *
      * @return string
      */
     private function _setCommand() : string
@@ -414,7 +406,6 @@ class ogr2ogr
     }
 
     /**
-     *
      * @return string
      */
     public function getCommand() : string
@@ -423,7 +414,6 @@ class ogr2ogr
     }
 
     /**
-     *
      * @throws ProcessFailedException if the process is not successful.
      *
      * @return string

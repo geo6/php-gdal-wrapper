@@ -7,7 +7,6 @@
  *
  * PHP version 7
  *
- * @package Geo6\GDAL\ogr2ogr
  * @license GPL License
  */
 
@@ -16,7 +15,6 @@ declare(strict_types=1);
 namespace Geo6\GDAL\ogr2ogr;
 
 /**
- *
  * @author Jonathan Beliën <jbe@geo6.be>
  */
 class Options
