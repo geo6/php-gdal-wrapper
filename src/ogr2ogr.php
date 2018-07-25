@@ -63,7 +63,7 @@ class ogr2ogr
         $this->_destination = $destination;
         $this->_source = $source;
         $this->_layers = (is_string($layers) ? [$layers] : $layers);
-        $this->_options = new ogr2ogr\options();
+        $this->_options = new ogr2ogr\Options();
 
         $this->_setCommand();
     }

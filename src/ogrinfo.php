@@ -56,7 +56,7 @@ class ogrinfo
     {
         $this->_source = $source;
         $this->_layers = (is_string($layers) ? [$layers] : $layers);
-        $this->_options = new ogrinfo\options();
+        $this->_options = new ogrinfo\Options();
 
         $this->_setCommand();
     }
