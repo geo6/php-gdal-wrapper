@@ -397,8 +397,8 @@ class ogr2ogr
         $this->_command = sprintf(
             'ogr2ogr %s %s %s %s',
             $options,
-            escapeshellarg($this->_destination),
-            escapeshellarg($this->_source),
+            preg_match('/^[a-z]{2,}:/', $this->_destination) === 1 ? $this->_destination : escapeshellarg($this->_destination),
+            preg_match('/^[a-z]{2,}:/', $this->_source) === 1 ? $this->_source : escapeshellarg($this->_source),
             implode(' ', $this->_layers)
         );
 

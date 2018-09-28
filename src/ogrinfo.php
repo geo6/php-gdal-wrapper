@@ -183,7 +183,7 @@ class ogrinfo
         $this->_command = sprintf(
             'ogrinfo %s %s %s',
             $options,
-            escapeshellarg($this->_source),
+            preg_match('/^[a-z]{2,}:/', $this->_source) === 1 ? $this->_source : escapeshellarg($this->_source),
             implode(' ', $this->_layers)
         );
 
