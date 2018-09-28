@@ -200,7 +200,7 @@ class ogrinfo
 
     /**
      * @param callable|null $callback
-     * @param array         $env An array of additional env vars to set when running the process
+     * @param array         $env      An array of additional env vars to set when running the process
      *
      * @throws ProcessFailedException if the process is not successful.
      *
