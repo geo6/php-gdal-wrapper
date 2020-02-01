@@ -67,7 +67,7 @@ class ogrinfo
      *
      * @return void
      */
-    public function setOption(string $name, $value = true) : void
+    public function setOption(string $name, $value = true): void
     {
         $this->_options->{$name} = $value;
 
@@ -77,7 +77,7 @@ class ogrinfo
     /**
      * @return string
      */
-    private function _setCommand() : string
+    private function _setCommand(): string
     {
         $options = '';
         if ($this->_options->helpGeneral === true) {
@@ -193,7 +193,7 @@ class ogrinfo
     /**
      * @return string
      */
-    public function getCommand() : string
+    public function getCommand(): string
     {
         return $this->_command;
     }
@@ -206,7 +206,7 @@ class ogrinfo
      *
      * @return string
      */
-    public function run(?callable $callback = null, array $env = []) : string
+    public function run(?callable $callback = null, array $env = []): string
     {
         $process = new Process($this->_command);
         $process->mustRun($callback, $env);
